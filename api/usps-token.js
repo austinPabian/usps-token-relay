@@ -1,34 +1,30 @@
+// /api/usps-token.js
+
 export default async function handler(req, res) {
-  if (req.method !== "GET") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-
-  const client_id = process.env.USPS_CLIENT_ID;
-  const client_secret = process.env.USPS_CLIENT_SECRET;
-
-  const body = new URLSearchParams({
-    grant_type: "client_credentials",
-    client_id,
-    client_secret,
-  });
+  const clientId = process.env.USPS_CLIENT_ID;
+  const clientSecret = process.env.USPS_CLIENT_SECRET;
 
   try {
-    const tokenRes = await fetch("https://api.usps.com/oauth2/v3/token", {
-      method: "POST",
+    const response = await fetch('https://apis.usps.com/oauth2/v3/token', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body,
+      body: new URLSearchParams({
+        grant_type: 'client_credentials',
+        client_id: clientId,
+        client_secret: clientSecret,
+      }),
     });
 
-    const tokenData = await tokenRes.json();
-
-    if (!tokenRes.ok) {
-      return res.status(tokenRes.status).json(tokenData);
+    if (!response.ok) {
+      const errorBody = await response.text();
+      return res.status(response.status).json({ error: 'Token request failed', body: errorBody });
     }
 
-    return res.status(200).json({ access_token: tokenData.access_token });
-  } catch (err) {
-    return res.status(500).json({ error: "Token request failed", detail: err.message });
+    const data = await response.json();
+    return res.status(200).json(data);
+  } catch (error) {
+    return res.status(500).json({ error: 'Unexpected server error', message: error.message });
   }
 }
