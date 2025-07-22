@@ -55,16 +55,16 @@ console.log("USPS Payload:", JSON.stringify({
       })
     });
 
-const rawText = await validationResponse.text();
-console.log("USPS Raw Response:", rawText);
+const rawUSPSResponse = await validationResponse.text();
+console.log("USPS Raw Response:", rawUSPSResponse);
 let validationResult;
 
 try {
-  validationResult = JSON.parse(rawText);
+  validationResult = JSON.parse(rawUSPSResponse);
 } catch (e) {
   return res.status(500).json({
     error: "Failed to parse USPS response",
-    detail: rawText
+    detail: rawUSPSResponse
   });
 }
       
