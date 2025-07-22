@@ -40,13 +40,10 @@ module.exports = async function handler(req, res) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        address: {
-          address1,
-          address2,
-          city,
-          state,
-          zip5
-        }
+        address: Object.fromEntries(
+  Object.entries({ address1, address2, city, state, zip5 })
+    .filter(([_, v]) => v !== undefined && v !== "")
+)
       })
     });
 
