@@ -32,6 +32,14 @@ module.exports = async function handler(req, res) {
       return res.status(500).json({ error: "Failed to retrieve USPS token", detail: tokenData });
     }
 
+      console.log("USPS Access Token:", accessToken);
+console.log("USPS Payload:", JSON.stringify({
+  address: Object.fromEntries(
+    Object.entries({ address1, address2, city, state, zip5 })
+      .filter(([_, v]) => v !== undefined && v !== "")
+  )
+}));
+      
     // USPS address validation call
     const validationResponse = await fetch("https://api.usps.com/shipping/v1/addresses/validate", {
       method: "POST",
@@ -47,6 +55,19 @@ module.exports = async function handler(req, res) {
       })
     });
 
+const rawText = await validationResponse.text();
+console.log("USPS Raw Response:", rawText);
+let validationResult;
+
+try {
+  validationResult = JSON.parse(rawText);
+} catch (e) {
+  return res.status(500).json({
+    error: "Failed to parse USPS response",
+    detail: rawText
+  });
+}
+      
     const rawText = await validationResponse.text();
     let validationResult;
 
