@@ -55,14 +55,16 @@ export default async function handler(req, res) {
       }
     );
 
+    // Grab text always, then try parsing as JSON
     const rawText = await uspsRes.text();
+    console.log("USPS raw text:", rawText);
 
     let data;
     try {
       data = JSON.parse(rawText);
-    } catch (e) {
+    } catch (err) {
       return res.status(500).json({
-        error: "USPS returned invalid JSON",
+        error: "USPS returned non-JSON response",
         detail: rawText,
       });
     }
