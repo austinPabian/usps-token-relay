@@ -20,7 +20,7 @@ export default async function handler(req, res) {
         grant_type: "client_credentials",
         client_id: clientId,
         client_secret: clientSecret,
-        scope: "usps:address-validation"
+        scope: "usps:api:address-validation"
       }).toString()
     });
 
