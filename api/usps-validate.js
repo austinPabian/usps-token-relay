@@ -13,7 +13,7 @@ export default async function handler(req, res) {
 
   try {
     // Get OAuth2 token
-    const tokenRes = await fetch("https://keyc.usps.com/oauth2/v3/token", {
+    const tokenRes = await fetch("https://apis.usps.com/oauth2/v3/token", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -56,16 +56,16 @@ export default async function handler(req, res) {
     );
 
     // Grab text always, then try parsing as JSON
-    const rawText = await uspsRes.text();
-    console.log("USPS raw text:", rawText);
+    const rawText = await validationResponse.text();
+    console.log("USPS raw text response:", rawText);
 
-    let data;
+    let validationResult;
     try {
-      data = JSON.parse(rawText);
+      validationResult = JSON.parse(rawText);
     } catch (err) {
       return res.status(500).json({
         error: "USPS returned non-JSON response",
-        detail: rawText,
+        detail: rawText.slice(0, 500) // avoid logging full HTML
       });
     }
 
