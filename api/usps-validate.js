@@ -36,7 +36,7 @@ export default async function handler(req, res) {
     }
 
     // Build validation request
-    const validationResponse = await fetch("https://secure.shippingapis.com/shipping/v1/address-validation", {
+    const validationResponse = await fetch("https://api.usps.com/shipping/v1/addresses/validate", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${accessToken}`,
@@ -53,6 +53,16 @@ export default async function handler(req, res) {
       })
     });
 
+      const rawText = await validationResponse.text();
+console.log("USPS raw response:", rawText);
+
+let validationResult;
+try {
+  validationResult = JSON.parse(rawText);
+} catch (err) {
+  return res.status(500).json({ error: "USPS returned invalid JSON", detail: rawText });
+}
+      
     const validationResult = await validationResponse.json();
 
     if (!validationResponse.ok) {
