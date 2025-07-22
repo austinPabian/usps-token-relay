@@ -85,4 +85,5 @@ module.exports = async function handler(req, res) {
     detail: err.message || err.toString(),
     stack: err.stack // Helpful for debugging
   });
-}
+ }
+};
