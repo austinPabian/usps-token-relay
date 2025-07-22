@@ -25,7 +25,9 @@ module.exports = async function handler(req, res) {
       body: "grant_type=client_credentials&scope=address-validation"
     });
 
-    const tokenData = await tokenResponse.json();
+      const tokenData = await tokenResponse.json();
+      console.log("USPS Token Response:", tokenData);
+
     const accessToken = tokenData.access_token;
 
     if (!accessToken) {
@@ -76,7 +78,11 @@ module.exports = async function handler(req, res) {
     }
 
     return res.status(200).json(validationResult);
-  } catch (err) {
-    return res.status(500).json({ error: "Internal server error", detail: err.message });
-  }
-};
+} catch (err) {
+  console.error("Handler caught error:", err);
+  return res.status(500).json({ 
+    error: "Internal server error", 
+    detail: err.message || err.toString(),
+    stack: err.stack // Helpful for debugging
+  });
+}
