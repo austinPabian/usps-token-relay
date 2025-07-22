@@ -12,16 +12,18 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Get OAuth2 token
-    const tokenRes = await fetch("https://apis.usps.com/oauth2/v3/token", {
+      // Fetch token (v3 USPS)
+    const tokenResponse = await fetch("https://apis.usps.com/oauth2/v3/token", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Authorization:
-          "Basic " +
-          Buffer.from(`${clientId}:${clientSecret}`).toString("base64"),
-      },
-      body: "grant_type=client_credentials&scope=address-validation",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: new URLSearchParams({
+      grant_type: "client_credentials",
+      client_id: clientId,
+      client_secret: clientSecret,
+      scope: "address-validation"
+    }).toString()
     });
 
     const tokenData = await tokenRes.json();
